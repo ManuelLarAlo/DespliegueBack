@@ -1,0 +1,124 @@
+package proyecto.aplicacion;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.server.ErrorPage;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
+import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import proyecto.aplicacion.config.JwtAuthenticationFilter;
+import proyecto.aplicacion.services.AuthService;
+import proyecto.aplicacion.services.CustomUserDetailsService;
+import proyecto.aplicacion.utils.Constants;
+import proyecto.aplicacion.utils.JwtUtil;
+
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true)
+public class SecurityConfig {
+
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
+    
+    @Autowired
+    private JwtUtil jwtUtil;
+    
+    @Autowired
+    private AuthService authService;
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+        	.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        	.csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(authorizeRequests -> //El orden de las reglas en spring security es importante, el admin siempre debe estar abajo
+                authorizeRequests
+                    .requestMatchers("/auth").permitAll() //Permitir a todos los usuarios las rutas de testeo, login y registro
+                    .requestMatchers("/Tareas").hasRole(Constants.ROLE_USER) //El usuario solo puede acceder a trabajos y tareas)
+                    .requestMatchers("/dashboard").authenticated()
+                    .requestMatchers("/Trabajos").hasRole(Constants.ROLE_TEAM)
+                    .requestMatchers("/**").hasRole(Constants.ROLE_ADMIN) // Solo el administrador puede acceder a todas las rutas
+                    .anyRequest().authenticated() // Todas las demás rutas requieren autenticación
+                    
+            )
+            .formLogin(customLogin ->
+            	customLogin
+	            	.loginPage("/login")
+	            	.failureUrl("/login") //En caso de login fallido, devuelve al usuario al login
+	            	.defaultSuccessUrl("/dashboard", true)
+            )
+            .logout(customLogout ->
+            	customLogout
+            		.logoutSuccessUrl("/login") //En caso de cerrar sesión, devuelve al usuario al login
+            )
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, authService, userDetailsService), UsernamePasswordAuthenticationFilter.class); //addFilter para gestionar los inicios de sesión desde el backend
+
+        return http.build();  // Builds and returns the SecurityFilterChain
+    }
+    
+    //En vez de desactivar el cors, es mejor configurarlo correctamente con un método aparte con la anotación bean
+    //Hay que configurarlo de esta forma, porque en caso de que no se haga, bloqueará todas las peticiones que vengan desde otro dominio,
+    //y también bloqueará el accessToken en las cabeceras, por lo que no serviría para nada el sistema de autenticación.
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Agrega la URL del frontend (tengo que cambiar la url por la del frontend que se haga en un futuro)
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); //Métodos que el front puede usar para comunicarse con el back
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type")); //Esto permite que el jwtToken (el accessToken en mi caso) pueda usarse en las cabeceras HTTP
+        configuration.setAllowCredentials(true); //Permite que el frontend pueda enviar cookies de credenciales (sería necesario para el refreshToken)
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // Aplica la configuración de cors a todas las rutas del backend
+        return source;
+    }
+    
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder());
+        return authenticationManagerBuilder.build();
+    }
+    
+    /*
+     * Configura el codificador de contraseñas usado en la aplicación
+     */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();  // Use BCrypt for encoding passwords
+    }
+    
+    /*
+     * Maneja las páginas de error de la aplicación, redirigiendo a
+     * las páginas asociadas segun el código de error lanzado. 
+     * */
+	@Bean
+	public WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> webServerFactoryCustomizer() {
+	    return factory -> {
+	        // Asigna la página personalizada para el error 404 (No encontrado).
+	        factory.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND, "/not-found"));
+
+	        // Asigna la página personalizada para el error 403 (Prohibido).
+	        factory.addErrorPages(new ErrorPage(HttpStatus.FORBIDDEN, "/forbidden"));
+	    };
+	}
+    
+}

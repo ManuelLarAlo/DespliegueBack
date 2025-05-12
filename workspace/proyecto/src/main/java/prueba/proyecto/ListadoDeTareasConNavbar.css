@@ -1,0 +1,290 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+}
+
+/* Navbar Styles */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  background-color: #333;
+  padding: 10px 20px;
+  color: white;
+  position: relative;
+  align-items: center;
+}
+
+.logo a {
+  color: white;
+  text-decoration: none;
+  font-size: 24px;
+}
+
+/* Menú de navegación siempre visible en pantallas grandes y dentro del menú hamburguesa en pantallas pequeñas */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  flex-direction: row;
+}
+
+.nav-links li a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.nav-links li a:hover {
+  text-decoration: underline;
+}
+
+.menu-icon {
+  display: none;
+  font-size: 30px;
+  color: white;
+  cursor: pointer;
+}
+.user-menu-items {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  flex-direction: row;
+}
+
+/* Responsive Navbar */
+@media (max-width: 600px) {
+  /* Menú de navegación se oculta en pantallas pequeñas */
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    background-color: rgba(51, 51, 51, 0.8);
+    padding: 10px 0;
+    z-index: 1000;
+    border: 1px solid white;
+  }
+
+  /* Mostrar el menú cuando está activo */
+  .nav-links.active {
+    display: flex;
+  }
+
+  /* Mostrar el icono del menú hamburguesa */
+  .menu-icon {
+    display: block;
+  }
+
+  /* Estilo para cada enlace en el menú hamburguesa */
+  .nav-links li {
+    text-align: center;
+    padding: 10px 0;
+    width: 100%;
+  }
+
+  .nav-links li a {
+    font-size: 20px;
+  }
+  .notification-icon {
+    margin-left: auto;
+    margin-right: 20px;
+  }
+  .user-links {
+    padding: 10px 0;
+    border-top: 1px solid white;
+  }
+}
+
+@media (min-width: 601px) {
+  /* En pantallas grandes, las opciones de usuario están en el mismo menú hamburguesa */
+  .menu-icon {
+    display: block;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 20px;
+    flex-direction: row;
+    width: auto; /* Asegura que no se expanda innecesariamente */
+  }
+
+  /* No se requiere la clase active aquí porque el menú está visible por defecto en pantallas grandes */
+  .nav-links li {
+    text-align: center;
+  }
+
+  /* Si deseas que el tamaño de los enlaces cambie en pantallas grandes, puedes hacerlo aquí */
+  .nav-links li a {
+    font-size: 18px;
+  }
+  /*Oculta los elementos de usuario de la navbar en pantallas grandes*/
+  .notification-icon {
+    margin-left: auto;
+    margin-right: 20px;
+  }
+  .user-links {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    position: absolute;
+    top: 90px;
+    left: 0;
+    background-color: rgba(51, 51, 51, 0.8);
+    padding: 10px 0;
+    z-index: 1000;
+    border: 1px solid white;
+  }
+  .user-links.active {
+    display: flex;
+  }
+  .user-links li {
+    text-align: center;
+    padding: 10px 0;
+    width: 100%;
+  }
+
+  .user-links li a {
+    font-size: 20px;
+  }
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+#app {
+  margin-left: 30px;
+  margin-right: 30px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  background-color: #b52a37;
+}
+
+.task-list {
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+.task-item p {   
+  overflow-wrap: break-word; /* Para romper palabras largas */
+  word-break: break-word;    /* Para asegurarse que rompa cualquier palabra larga */
+}
+
+.task-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 2000;
+}
+
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.popup-content form {
+  display: flex;
+  flex-direction: column;
+}
+
+.popup-content label {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.popup-content input,
+.popup-content select {
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: white;
+  font-size: 0.9em;
+}
+
+.badge.alta {
+  background-color: #e74c3c;
+}
+
+.badge.media {
+  background-color: #f1c40f;
+  color: black;
+}
+
+.badge.baja {
+  background-color: #2ecc71;
+}
+@media (max-width: 550px) {
+  .task-item {
+    display: flex;
+    flex-direction: column;
+  }
+}

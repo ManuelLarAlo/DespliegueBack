@@ -1,0 +1,313 @@
+#calendar {
+  width: 100%;
+  height: 100vh;
+  max-width: 100%;
+  padding: 20px;
+}
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px 0 20px;
+}
+.buttonContainer h3 {
+  text-align: center;
+}
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* oscuro */
+  display: none;
+  z-index: 999; /* Debe ser menor que el del modal */
+}
+
+/* Estilo para la descripción en el modal de detalles */
+#detailDesc {
+  white-space: pre-wrap; /* Permite que el texto se ajuste a la siguiente línea */
+  word-wrap: break-word; /* Asegura que las palabras largas se rompan si es necesario */
+  max-width: 100%; /* El ancho máximo de la descripción será el 100% del modal */
+  overflow-wrap: break-word; /* Asegura que las palabras largas no desborden el contenedor */
+  margin-bottom: 10px; /* Agrega un pequeño espacio por debajo */
+  height: 100px; /* Define una altura fija para la descripción */
+  overflow-y: auto; /* Permite la barra de desplazamiento vertical si el contenido es muy largo */
+  box-sizing: border-box; /* Asegura que el padding no afecte el tamaño total */
+  padding-right: 10px; /* Da espacio al lado derecho para que el texto no toque el borde */
+}
+
+/* El resto del estilo del modal */
+#taskModal,
+#taskDetailsModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(
+    -50%,
+    -50%
+  ); /* Centra el modal completamente en la pantalla */
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 20px;
+  z-index: 1000;
+  width: 90%; /* El modal ocupará el 90% del ancho de la ventana */
+  max-width: 400px; /* Tamaño máximo del modal */
+  max-height: 80vh; /* El modal no puede ocupar más del 80% de la altura de la ventana */
+  overflow-y: auto; /* Se agrega desplazamiento vertical si el contenido excede el tamaño del modal */
+  box-sizing: border-box; /* Asegura que el padding no afecte las dimensiones del modal */
+
+  /* Flexbox para alinear contenido dentro del modal */
+  display: flex;
+  flex-direction: column; /* Alinea los elementos de forma vertical */
+  justify-content: flex-start; /* Alinea los elementos desde la parte superior */
+  align-items: stretch; /* Asegura que los elementos se estiren para ocupar todo el ancho disponible */
+}
+
+/* Centrar los detalles dentro del modal */
+#taskModal > *,
+#taskDetailsModal > * {
+  width: 100%; /* Asegura que los elementos dentro del modal ocupen el 100% de su contenedor */
+  max-width: 100%; /* Evita que los elementos se desborden */
+  margin-bottom: 10px; /* Espaciado entre los elementos */
+}
+
+/* Contenedor de los botones con Flexbox */
+#taskModal .button-container,
+#taskDetailsModal .button-container {
+  display: flex;
+  justify-content: center; /* Centra los botones horizontalmente */
+  width: 100%;
+  gap: 10px; /* Espacio entre los botones */
+}
+
+/* Asegurar que los botones estén alineados y ocupen todo el ancho disponible */
+#taskModal button,
+#taskDetailsModal button {
+  width: 48%; /* Ajustamos el ancho de los botones para que no ocupen todo el espacio */
+  margin: 10px 0; /* Añadimos margen entre los botones */
+}
+
+/* Estilo para los inputs, select y textarea dentro del modal */
+#taskModal input,
+#taskModal select,
+#taskModal textarea,
+#taskDetailsModal input,
+#taskDetailsModal select,
+#taskDetailsModal textarea {
+  width: 100%; /* Los campos de entrada ocuparán todo el ancho del modal */
+  padding: 10px; /* Agregamos padding para mayor comodidad */
+  margin-bottom: 10px; /* Añadimos un poco de espacio entre los campos */
+  box-sizing: border-box; /* Para que el padding no afecte el ancho total */
+  font-size: 1rem; /* Aseguramos que la fuente sea legible */
+}
+
+/* Asegurar que los selectores (select) estén bien alineados y ocupen todo el ancho disponible */
+#taskModal select,
+#taskDetailsModal select {
+  width: 100%; /* Los select también ocuparán todo el ancho del modal */
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  height: 40px;
+}
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+}
+
+/* Navbar Styles */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  background-color: #333;
+  padding: 10px 20px;
+  color: white;
+  position: relative;
+  align-items: center;
+}
+
+.logo a {
+  color: white;
+  text-decoration: none;
+  font-size: 24px;
+}
+
+/* Menú de navegación siempre visible en pantallas grandes y dentro del menú hamburguesa en pantallas pequeñas */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  flex-direction: row;
+}
+
+.nav-links li a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.nav-links li a:hover {
+  text-decoration: underline;
+}
+
+.menu-icon {
+  display: none;
+  font-size: 30px;
+  color: white;
+  cursor: pointer;
+}
+.user-menu-items {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  flex-direction: row;
+}
+
+/* Responsive Navbar */
+@media (max-width: 600px) {
+  /* Menú de navegación se oculta en pantallas pequeñas */
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    background-color: rgba(51, 51, 51, 0.8);
+    padding: 10px 0;
+    z-index: 1000;
+    border: 1px solid white;
+  }
+
+  /* Mostrar el menú cuando está activo */
+  .nav-links.active {
+    display: flex;
+  }
+
+  /* Mostrar el icono del menú hamburguesa */
+  .menu-icon {
+    display: block;
+  }
+
+  /* Estilo para cada enlace en el menú hamburguesa */
+  .nav-links li {
+    text-align: center;
+    padding: 10px 0;
+    width: 100%;
+  }
+
+  .nav-links li a {
+    font-size: 20px;
+  }
+  .notification-icon {
+    margin-left: auto;
+    margin-right: 20px;
+  }
+  .user-links {
+    padding: 10px 0;
+    border-top: 1px solid white;
+  }
+}
+
+@media (min-width: 601px) {
+  /* En pantallas grandes, las opciones de usuario están en el mismo menú hamburguesa */
+  .menu-icon {
+    display: block;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 20px;
+    flex-direction: row;
+    width: auto; /* Asegura que no se expanda innecesariamente */
+  }
+
+  /* No se requiere la clase active aquí porque el menú está visible por defecto en pantallas grandes */
+  .nav-links li {
+    text-align: center;
+  }
+
+  /* Si deseas que el tamaño de los enlaces cambie en pantallas grandes, puedes hacerlo aquí */
+  .nav-links li a {
+    font-size: 18px;
+  }
+  /*Oculta los elementos de usuario de la navbar en pantallas grandes*/
+  .notification-icon {
+    margin-left: auto;
+    margin-right: 20px;
+  }
+  .user-links {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    position: absolute;
+    top: 90px;
+    left: 0;
+    background-color: rgba(51, 51, 51, 0.8);
+    padding: 10px 0;
+    z-index: 1000;
+    border: 1px solid white;
+  }
+  .user-links.active {
+    display: flex;
+  }
+  .user-links li {
+    text-align: center;
+    padding: 10px 0;
+    width: 100%;
+  }
+
+  .user-links li a {
+    font-size: 20px;
+  }
+}
+@media (max-width: 400px) {
+  #calendar {
+    font-size: 12px;
+  }
+  .viewContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .filters {
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+}
+@media (max-width: 500px) {
+  #calendar {
+    font-size: 12px;
+    width: 100%;
+    padding: 10px;
+    height: 50vh;
+  }
+  .viewContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .filters {
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+  
+  

@@ -1,0 +1,100 @@
+#calendar {
+  width: 100%;
+  height: 100vh;
+  max-width: 100%;
+  padding: 50px;
+}
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 50px 0 50px;
+}
+.buttonContainer h3 {
+  text-align: center;
+}
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* oscuro */
+  display: none;
+  z-index: 999; /* Debe ser menor que el del modal */
+}
+
+/* Estilo para la descripción en el modal de detalles */
+#detailDesc {
+  white-space: pre-wrap;       /* Permite que el texto se ajuste a la siguiente línea */
+  word-wrap: break-word;       /* Asegura que las palabras largas se rompan si es necesario */
+  max-width: 100%;             /* El ancho máximo de la descripción será el 100% del modal */
+  overflow-wrap: break-word;   /* Asegura que las palabras largas no desborden el contenedor */
+  margin-bottom: 10px;         /* Agrega un pequeño espacio por debajo */
+  height: 100px;               /* Define una altura fija para la descripción */
+  overflow-y: auto;            /* Permite la barra de desplazamiento vertical si el contenido es muy largo */
+  box-sizing: border-box;      /* Asegura que el padding no afecte el tamaño total */
+  padding-right: 10px;         /* Da espacio al lado derecho para que el texto no toque el borde */
+}
+
+/* El resto del estilo del modal */
+#taskModal, #taskDetailsModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centra el modal completamente en la pantalla */
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 20px;
+  z-index: 1000;
+  width: 90%; /* El modal ocupará el 90% del ancho de la ventana */
+  max-width: 400px; /* Tamaño máximo del modal */
+  max-height: 80vh; /* El modal no puede ocupar más del 80% de la altura de la ventana */
+  overflow-y: auto; /* Se agrega desplazamiento vertical si el contenido excede el tamaño del modal */
+  box-sizing: border-box; /* Asegura que el padding no afecte las dimensiones del modal */
+  
+  /* Flexbox para alinear contenido dentro del modal */
+  display: flex;
+  flex-direction: column; /* Alinea los elementos de forma vertical */
+  justify-content: flex-start; /* Alinea los elementos desde la parte superior */
+  align-items: stretch; /* Asegura que los elementos se estiren para ocupar todo el ancho disponible */
+}
+
+/* Centrar los detalles dentro del modal */
+#taskModal > *, #taskDetailsModal > * {
+  width: 100%; /* Asegura que los elementos dentro del modal ocupen el 100% de su contenedor */
+  max-width: 100%; /* Evita que los elementos se desborden */
+  margin-bottom: 10px; /* Espaciado entre los elementos */
+}
+
+/* Contenedor de los botones con Flexbox */
+#taskModal .button-container, #taskDetailsModal .button-container {
+  display: flex;
+  justify-content: center; /* Centra los botones horizontalmente */
+  width: 100%;
+  gap: 10px; /* Espacio entre los botones */
+}
+
+/* Asegurar que los botones estén alineados y ocupen todo el ancho disponible */
+#taskModal button, #taskDetailsModal button {
+  width: 48%; /* Ajustamos el ancho de los botones para que no ocupen todo el espacio */
+  margin: 10px 0; /* Añadimos margen entre los botones */
+}
+
+/* Estilo para los inputs, select y textarea dentro del modal */
+#taskModal input, #taskModal select, #taskModal textarea, 
+#taskDetailsModal input, #taskDetailsModal select, #taskDetailsModal textarea {
+  width: 100%; /* Los campos de entrada ocuparán todo el ancho del modal */
+  padding: 10px; /* Agregamos padding para mayor comodidad */
+  margin-bottom: 10px; /* Añadimos un poco de espacio entre los campos */
+  box-sizing: border-box; /* Para que el padding no afecte el ancho total */
+  font-size: 1rem; /* Aseguramos que la fuente sea legible */
+}
+
+/* Asegurar que los selectores (select) estén bien alineados y ocupen todo el ancho disponible */
+#taskModal select, #taskDetailsModal select {
+  width: 100%; /* Los select también ocuparán todo el ancho del modal */
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  height: 40px;
+}

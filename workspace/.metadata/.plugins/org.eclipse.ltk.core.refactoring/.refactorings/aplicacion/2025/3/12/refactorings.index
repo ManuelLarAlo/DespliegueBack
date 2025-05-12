@@ -1,0 +1,22 @@
+1742291775647	Rename resource 'application.properties'
+1742297214642	Rename type 'ClienteRepository'
+1742297219848	Rename type 'PersonaRepository'
+1742297225184	Rename type 'TareaRepository'
+1742297230535	Rename type 'TrabajoRepository'
+1742369688082	Move compilation units
+1742370550561	Rename type 'Persona'
+1742371835427	Rename type 'IPersonaRepository'
+1742388365483	Rename field 'Nombre'
+1742458866547	Rename type 'constants'
+1742459015594	Rename type 'DamfilmsServerError'
+1742459281370	Delete element
+1742459369843	Move compilation unit
+1742459427385	Move compilation unit
+1742459445285	Move compilation unit
+1742473119390	Rename field 'fechaInicio'
+1742473128171	Rename field 'fechaFin'
+1742541387287	Rename type 'ResourceNotFoundException'
+1742541469999	Delete element
+1742541514997	Rename type 'ResourceNotFoundException'
+1742542252464	Move compilation units
+1742545895007	Rename compilation unit 'AsignarRolesDTO.java'

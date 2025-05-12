@@ -1,0 +1,98 @@
+package proyecto.aplicacion.config;
+
+import java.io.IOException;
+import java.util.Collections;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import proyecto.aplicacion.services.AuthService;
+import proyecto.aplicacion.services.CustomUserDetailsService;
+import proyecto.aplicacion.utils.JwtUtil;
+import proyecto.aplicacion.utils.exceptions.UnauthorizedException;
+
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+	
+    private final JwtUtil jwtUtil;
+    
+    private final AuthService authService;
+    
+    private final CustomUserDetailsService customUserDetailsService;
+    
+
+
+    // Constructor para inyectar JwtUtil y AuthService
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, AuthService authService, CustomUserDetailsService customUserDetailsService) {
+        this.jwtUtil = jwtUtil;
+        this.authService = authService;
+        this.customUserDetailsService = customUserDetailsService;
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
+        // Evitar aplicar el filtro a rutas públicas
+        String path = request.getRequestURI();
+        if (path.startsWith("/login") || path.startsWith("/registro") || path.startsWith("/public")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // Extraer token
+        String accessToken = extractToken(request);
+
+        try {
+            if (accessToken != null && jwtUtil.isTokenExpired(accessToken)) {
+                // Extraer username solo si el token ya fue validado
+                String username = jwtUtil.extractUsername(accessToken);
+                UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                // Intentar refrescar el token solo si el access token no es válido
+                String newAccessToken = authService.refreshAccessToken(request, response);
+
+                if (newAccessToken != null && jwtUtil.isTokenExpired(newAccessToken)) {
+                    String username = jwtUtil.extractUsername(newAccessToken);
+                    UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                    // Devolver nuevo access token al cliente
+                    response.setHeader("Authorization", "Bearer " + newAccessToken);
+                } else {
+                    // Si no hay nuevo token o también es inválido
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("Token expirado o inválido. Inicie sesión nuevamente.");
+                    return;
+                }
+            }
+        } catch (UnauthorizedException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Refresh token expirado o inválido. Inicie sesión nuevamente.");
+            return;
+        }
+
+        // Continuar con el siguiente filtro
+        filterChain.doFilter(request, response);
+    }
+
+
+    private String extractToken(HttpServletRequest request) {
+        // Obtener el token del header Authorization
+        String header = request.getHeader("Authorization");
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.substring(7); // Extraer token después de "Bearer "
+        }
+        return null;
+    }
+}
