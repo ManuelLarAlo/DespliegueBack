@@ -1,3 +1,4 @@
+/*
 package proyecto.aplicacion.config;
 
 import java.util.Date;
@@ -191,3 +192,4 @@ public class DataInitializer {
         }
     }
 }
+*/
