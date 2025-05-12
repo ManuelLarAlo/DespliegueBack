@@ -1,14 +1,13 @@
-# Usa una imagen base de Java (por ejemplo, OpenJDK 17)
-FROM eclipse-temurin:21-jdk-alpine
-
-# Establece el directorio de trabajo dentro del contenedor
+# Etapa de construcción
+FROM maven:3.8.5-openjdk-21 AS build
 WORKDIR /app
+COPY aplicacion/pom.xml .
+COPY aplicacion/src ./src
+RUN mvn clean package -DskipTests
 
-# Copia el archivo .jar desde el directorio target de la aplicación
-COPY target/*.jar app.jar
-
-# Expón el puerto 8080 para que la aplicación sea accesible
+# Etapa de ejecución
+FROM eclipse-temurin:17
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-
-# Comando para ejecutar el .jar generado por Spring Boot
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
