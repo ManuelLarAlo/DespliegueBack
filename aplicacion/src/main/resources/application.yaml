@@ -4,9 +4,9 @@ spring:
       ddl-auto: update
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${MYSQLHOST}:${MYSQLPORT}/appA3COM?createDatabaseIfNotExist=true
-    username: ${MYSQLUSER}
-    password: ${MYSQLPASSWORD}
+    url: jdbc:mysql://${{shared.MYSQLHOST}}:${{shared.MYSQLPORT}}/appA3COM?createDatabaseIfNotExist=true
+    username: ${{shared.MYSQLUSER}}
+    password: ${{shared.MYSQLPASSWORD}}
     hikari:
       connection-timeout: 60000
       maximum-pool-size: 5
