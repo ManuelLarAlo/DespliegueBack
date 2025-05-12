@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Delete resource &apos;proyecto/src/main/java/prueba/proyecto/Paginacion.vue&apos;" deleteContents="false" description="Delete resource &apos;proyecto/src/main/java/prueba/proyecto/Paginacion.vue&apos;" element1="/proyecto/src/main/java/prueba/proyecto/Paginacion.vue" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1744192574304"/>
-</session>

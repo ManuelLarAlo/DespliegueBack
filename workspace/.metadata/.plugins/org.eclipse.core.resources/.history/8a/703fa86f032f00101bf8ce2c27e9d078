@@ -1,8 +1,0 @@
-services:
-  - type: web
-    name: springboot-app
-    env: docker
-    plan: free
-    branch: main
-    autoDeploy: true
-    healthCheckPath: /

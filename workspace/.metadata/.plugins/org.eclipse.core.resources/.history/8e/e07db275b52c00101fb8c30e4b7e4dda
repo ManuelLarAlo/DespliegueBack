@@ -1,5 +1,0 @@
-package proyecto.aplicacion.utils.exceptions;
-
-public class SessionExpiredException {
-
-}
