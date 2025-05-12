@@ -31,6 +31,6 @@ jwt:
   cookie-expiration: 2592000000  # Tiempo de expiración para el Refresh Token en milisegundos (30 días), debe ser el mismo que el del refresh token
 
 server:
-  port: ${PORT:8080}
+  port: 8080
   servlet:
     context-path: /A3com
