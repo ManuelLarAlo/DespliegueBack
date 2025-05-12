@@ -3,6 +3,8 @@ services:
     name: springboot-app
     runtime: docker
     plan: free
-    branch: main
+    branch: main  # Asegúrate de que Render use la rama correcta
     autoDeploy: true
+    buildCommand: "docker build -f aplicacion/Dockerfile -t springboot-app ." # Asegúrate de que el path sea correcto
+    startCommand: "docker run -p 8080:8080 springboot-app" # Comando para ejecutar el contenedor
     healthCheckPath: /
